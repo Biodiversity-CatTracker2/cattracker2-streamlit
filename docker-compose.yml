@@ -1,0 +1,17 @@
+version: "3"
+services:
+  streamlit:
+    # build: .
+    image: cattracker2.azurecr.io/tracks/cattracker2-tracks
+    environment:
+      - AZURE_POSTGRES_DB_STRING=${AZURE_POSTGRES_DB_STRING}
+    command: "streamlit run streamlit_app.py --server.headless=true --server.port=${TUNNEL_PORT} --browser.gatherUsageStats=false"
+    ports:
+      - ${TUNNEL_PORT}:${TUNNEL_PORT}
+    volumes:
+      - ".:/usr/src/app/src"
+#    networks:
+#      - "tracks"
+#networks:
+#  tracks:
+#    external: true
