@@ -1,4 +1,5 @@
 class Style:
+
     def __init__(self):
         pass
 
@@ -41,3 +42,44 @@ class Style:
         return f'###### Built with:<br>{streamlit_badge}&nbsp;&nbsp;' \
                f'{python_badge}&nbsp;&nbsp;{postgres_badge}&nbsp;&nbsp;' \
                f'{docker_badge}&nbsp;&nbsp;{azure_badge} '
+
+    @staticmethod
+    def highlight_css():
+        return '''.highlight_1 {
+          border-radius: 0.05rem;
+          color: white;
+          padding: 0.05rem;
+          margin-bottom: 0.05rem;
+        }
+
+        .highlight_2 {
+          border-radius: 0.20rem;
+          color: white;
+          padding: 0.20rem;
+          margin-bottom: 0.20rem;
+        }
+
+        .bold {
+          padding-left: 1rem;
+          font-weight: 700;
+        }
+        .blue {
+          background-color: #428bca;
+        }
+        .green {
+          background-color: #5cb85c;
+        }
+        .catname {
+          background-color: #f8f8f2;
+          color: #282a36;
+        }
+
+        .sansserif {
+          font-family: Helvetica, Arial, Sans-Serif;
+          font-size: 20px;
+        }
+
+        span {
+           margin: 0px;
+           padding: 0px;
+        }'''

@@ -2,14 +2,12 @@
 # coding: utf-8
 
 import os
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import requests
 import streamlit as st
-import streamlit.components.v1 as components
 from bokeh.models.widgets import Div
 from dotenv import load_dotenv
 from loguru import logger
@@ -139,10 +137,9 @@ def set_footer():
     return st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown('<style>{}</style>'.format(f.read()),
-                    unsafe_allow_html=True)
+def local_css():
+    st.markdown('<style>{}</style>'.format(style.highlight_css()),
+                unsafe_allow_html=True)
 
 
 def highlight(string, color, num=1):
@@ -207,11 +204,12 @@ def inject(snippet):
                       'w') as f:
                 f.write(new_content)
 
+
 def main(cat_name):
     add_logger()
     simple_id = get_simple_id(cat_name)
 
-    local_css(f'{Path(__file__).parent}/css/highlight.css')
+    local_css()
     title = f'# GPS coordinates of <i>{highlight(cat_name, "catname", 2)}</i>'
     st.markdown(title, unsafe_allow_html=True)
 
@@ -223,10 +221,7 @@ def main(cat_name):
     # LOAD DATA
     df = select_data(date_selected, simple_id)
 
-    first_time_in_date = df.iloc[0, 0]
-    last_time_in_date = df.iloc[-1, 0]
-
-    local_css(f'{Path(__file__).parent}/css/highlight.css')
+    local_css()
     try:
         img_url = f'https://cattracker2.blob.core.windows.net/tracks/cats/{cat_name.lower()}.webp'
         requests.get(img_url)
@@ -246,6 +241,9 @@ def main(cat_name):
         #             np.average(df['location_long']))
         df = df.rename(columns={'location_lat': 'lat', 'location_long': 'lon'})
         df['time'] = df['timestamp_local'].dt.time
+        df.sort_values(by=['time'], inplace=True)
+        first_time_in_date = df.iloc[0, 0]
+        last_time_in_date = df.iloc[-1, 0]
         df = df.astype({'time': 'string'})
 
         t = 'Showing tracking points between ' \
@@ -307,10 +305,10 @@ if __name__ == '__main__':
     col1, _ = ph_0.columns([1, 3])
     with col1:
         ph = st.empty()
-        selection = ph.selectbox(
-            'Your cat\'s name',
-            ('',
-             *[x[1].capitalize() for x in subjects.values if x[2] is False]))
+        selection = ph.text_input('Search your cat\'s name', '')
+        assert selection.lower().capitalize(
+        ) in [x[1].capitalize()
+              for x in subjects.values if x[2] is False] + ['', None]
 
     if selection:
         ph.empty()
